@@ -1,0 +1,7 @@
+[package]
+name = "RustyStrandbeest"
+version = "0.1.0"
+authors = ["Carpe Necopinum <CarpeNecopinum@users.noreply.github.com>"]
+
+[dependencies]
+glium = "*"
