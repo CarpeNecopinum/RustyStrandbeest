@@ -3,7 +3,6 @@ use glium::*;
 use glium::index::PrimitiveType;
 use glium::index::NoIndices;
 use glium::backend::Facade;
-use glium::uniforms::EmptyUniforms;
 
 #[derive(Copy, Clone)]
 struct Vert {
@@ -74,7 +73,7 @@ impl Renderer {
             point_size: Some(10.0),
             .. Default::default()
         };
-        
+
         frame.draw(
             &self.masses_buffer, &self.spring_indices,
             &self.program,

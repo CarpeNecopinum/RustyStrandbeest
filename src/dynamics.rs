@@ -62,6 +62,14 @@ impl System {
         self.springs.push(spring);
         self.springs.len() - 1
     }
+
+    pub fn push_sized_spring(&mut self, from: usize, to: usize, length: f32) -> usize {
+        let ps = (&self.masses[from], &self.masses[to]);
+
+        let spring = Spring::unit((from, to), length);
+        self.springs.push(spring);
+        self.springs.len() - 1
+    }
 }
 
 pub trait Solver {

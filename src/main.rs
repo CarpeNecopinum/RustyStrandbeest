@@ -2,6 +2,7 @@
 extern crate glium;
 extern crate glm;
 
+mod strandbeest;
 mod dynamics;
 mod view;
 
@@ -12,11 +13,7 @@ fn main() {
     use glium::DisplayBuild;
     let display = glium::glutin::WindowBuilder::new().build_glium().unwrap();
 
-    let mut model = dynamics::System::new();
-    let pivot = model.push_mass(dynamics::Mass::pinned(vec2(0.0, 0.0)));
-    let mass_d = model.push_mass(dynamics::Mass::unit(vec2(-40.1, 0.0)));
-    model.push_auto_spring(pivot, mass_d);
-
+    let mut model = strandbeest::make_strandbeest(&vec2(0.0, 0.0));
     let mut view = view::Renderer::new(&display);
 
     loop {
