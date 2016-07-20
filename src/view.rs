@@ -21,10 +21,11 @@ impl Vert {
 
 const VERT_SHADER: &'static str = r#"
     #version 130
+    uniform mat4 projection;
 
     in vec2 aPosition;
     void main() {
-        gl_Position = vec4(aPosition / 100.0, 0.0, 1.0);
+        gl_Position = projection * vec4(aPosition, 0.0, 1.0);
     }
 "#;
 
@@ -74,17 +75,28 @@ impl Renderer {
             .. Default::default()
         };
 
+        let (x,y) = frame.get_dimensions();
+        let aspect = x as f32 / y as f32;
+        let uniforms = uniform!{
+            projection: [
+                [0.01 / aspect, 0.0          , 0.0, 0.0],
+                [ 0.0, 0.01, 0.0, 0.0],
+                [ 0.0, 0.0          , 1.0, 0.0],
+                [ 0.0, 0.0          , 0.0, 1.0]
+            ]
+        };
+
         frame.draw(
             &self.masses_buffer, &self.spring_indices,
             &self.program,
-            &uniforms::EmptyUniforms,
+            &uniforms,
             &params
         ).unwrap();
 
         frame.draw(
             &self.masses_buffer, &just_points,
             &self.program,
-            &uniforms::EmptyUniforms,
+            &uniforms,
             &params
         ).unwrap();
     }
