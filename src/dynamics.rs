@@ -2,6 +2,7 @@ use glm::*;
 
 pub struct Mass {
     pub pos: Vec2,
+    pub vel: Vec2,
     pub imass: f32
 }
 
@@ -9,6 +10,7 @@ impl Mass {
     pub fn pinned(position: Vec2) -> Mass {
         Mass {
             pos: position,
+            vel: vec2(0.0, 0.0),
             imass: 0.0
         }
     }
@@ -16,6 +18,7 @@ impl Mass {
     pub fn unit(position: Vec2) -> Mass {
         Mass {
             pos: position,
+            vel: vec2(0.0, 0.0),
             imass: 1.0
         }
     }
@@ -64,8 +67,6 @@ impl System {
     }
 
     pub fn push_sized_spring(&mut self, from: usize, to: usize, length: f32) -> usize {
-        let ps = (&self.masses[from], &self.masses[to]);
-
         let spring = Spring::unit((from, to), length);
         self.springs.push(spring);
         self.springs.len() - 1
@@ -73,5 +74,5 @@ impl System {
 }
 
 pub trait Solver {
-    fn solve(&self, mut system: &System);
+    fn solve(&self, system: &mut System, ms: f32);
 }

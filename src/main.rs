@@ -5,15 +5,17 @@ extern crate glm;
 mod strandbeest;
 mod dynamics;
 mod view;
+mod force_solver;
 
 use glm::*;
 use glium::Surface;
+use strandbeest::Strandbeest;
 
 fn main() {
     use glium::DisplayBuild;
     let display = glium::glutin::WindowBuilder::new().build_glium().unwrap();
 
-    let mut model = strandbeest::make_strandbeest(&vec2(0.0, 0.0));
+    let mut model = Strandbeest::new(&vec2(0.0, 0.0));
     let mut view = view::Renderer::new(&display);
 
     loop {
@@ -25,7 +27,8 @@ fn main() {
             }
         }
 
-        view.update(&display, &model);
+        model.step(0.016);
+        view.update(&display, &model.system);
 
         let mut target = display.draw();
         target.clear_color(0.5, 0.5, 0.5, 1.0);
