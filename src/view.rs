@@ -6,37 +6,22 @@ use glium::backend::Facade;
 
 #[derive(Copy, Clone)]
 struct Vert {
-    aPosition: [f32; 2]
+    position: [f32; 2]
 }
-implement_vertex!(Vert, aPosition);
+implement_vertex!(Vert, position);
 
 impl Vert {
     pub fn glm(source: &glm::Vec2) -> Vert {
         let p = source.clone();
         Vert {
-            aPosition: [p.x, p.y]
+            position: [p.x, p.y]
         }
     }
 }
 
-const VERT_SHADER: &'static str = r#"
-    #version 130
-    uniform mat4 projection;
-
-    in vec2 aPosition;
-    void main() {
-        gl_Position = projection * vec4(aPosition, 0.0, 1.0);
-    }
-"#;
-
-const FRAG_SHADER: &'static str = r#"
-    #version 130
-
-    out vec3 fColor;
-    void main() {
-        fColor = vec3(1,0,1);
-    }
-"#;
+const VERT_SHADER: &'static str = include_str!("shader/strandbeest.vsh");
+const GEO_SHADER : &'static str = include_str!("shader/strandbeest.gsh");
+const FRAG_SHADER: &'static str = include_str!("shader/strandbeest.fsh");
 
 pub struct Renderer {
     spring_indices: IndexBuffer<u16>,
@@ -52,7 +37,7 @@ impl Renderer {
         Renderer {
             spring_indices: IndexBuffer::empty_dynamic(f, PrimitiveType::LinesList, 1).unwrap(),
             masses_buffer: VertexBuffer::empty_dynamic(f, 1).unwrap(),
-            program: Program::from_source(f, VERT_SHADER, FRAG_SHADER, None).unwrap()
+            program: Program::from_source(f, VERT_SHADER, FRAG_SHADER, Some(GEO_SHADER)).unwrap()
         }
     }
 
@@ -69,7 +54,7 @@ impl Renderer {
     }
 
     pub fn render(&self, frame: &mut Frame) {
-        let just_points = NoIndices(PrimitiveType::Points);
+        //let just_points = NoIndices(PrimitiveType::Points);
         let params = DrawParameters {
             point_size: Some(10.0),
             .. Default::default()
@@ -79,10 +64,10 @@ impl Renderer {
         let aspect = x as f32 / y as f32;
         let uniforms = uniform!{
             projection: [
-                [0.01 / aspect, 0.0          , 0.0, 0.0],
-                [ 0.0, 0.01, 0.0, 0.0],
-                [ 0.0, 0.0          , 1.0, 0.0],
-                [ 0.0, 0.0          , 0.0, 1.0]
+                [0.01 / aspect, 0.0 , 0.0, 0.0],
+                [ 0.0         , 0.01, 0.0, 0.0],
+                [ 0.0         , 0.0 , 1.0, 0.0],
+                [ 0.0         , 0.0 , 0.0, 1.0]
             ]
         };
 
@@ -93,11 +78,11 @@ impl Renderer {
             &params
         ).unwrap();
 
-        frame.draw(
+    /*frame.draw(
             &self.masses_buffer, &just_points,
             &self.program,
             &uniforms,
             &params
-        ).unwrap();
+        ).unwrap();*/
     }
 }
